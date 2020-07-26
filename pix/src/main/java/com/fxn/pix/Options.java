@@ -17,6 +17,7 @@ public class Options implements Serializable {
     private boolean excludeVideos = false;
     private boolean excludeImages = false;
     private boolean cameraDisabled = false;
+    private boolean selectImageOrVideo = false;
     public static final int SCREEN_ORIENTATION_UNSET = -2;
     public static final int SCREEN_ORIENTATION_UNSPECIFIED = -1;
     public static final int SCREEN_ORIENTATION_LANDSCAPE = 0;
@@ -132,6 +133,15 @@ public class Options implements Serializable {
     public Options setCountVideo(int countVideo) {
         check();
         this.countVideo = countVideo;
+        return this;
+    }
+
+    public boolean isSelectImageOrVideo() {
+        return selectImageOrVideo;
+    }
+
+    public Options setSelectImageOrVideo(boolean selectImageOrVideo) {
+        this.selectImageOrVideo = selectImageOrVideo;
         return this;
     }
 

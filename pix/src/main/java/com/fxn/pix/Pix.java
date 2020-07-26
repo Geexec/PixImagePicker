@@ -200,6 +200,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     selectionList.remove(img);
                     initaliseadapter.select(false, position);
                     mainImageAdapter.select(false, position);
+                    mainImageAdapter.notifyDataSetChanged();
                 } else {
                     if (options.getCountImage() <= selectionList.size()) {
                         Toast.makeText(Pix.this,
@@ -211,6 +212,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     selectionList.add(img);
                     initaliseadapter.select(true, position);
                     mainImageAdapter.select(true, position);
+                    mainImageAdapter.notifyDataSetChanged();
                 }
                 if (selectionList.size() == 0) {
                     LongSelection = false;
@@ -279,6 +281,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     selectionList.remove(img);
                     initaliseadapter.select(false, position);
                     mainImageAdapter.select(false, position);
+                    mainImageAdapter.notifyDataSetChanged();
                 } else {
                     if (options.getCountImage() <= selectionList.size()) {
                         Toast.makeText(Pix.this,
@@ -290,6 +293,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     selectionList.add(img);
                     initaliseadapter.select(true, position);
                     mainImageAdapter.select(true, position);
+                    mainImageAdapter.notifyDataSetChanged();
                 }
                 selection_check.setVisibility(View.GONE);
                 topbar.setBackgroundColor(colorPrimaryDark);
@@ -576,6 +580,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         });
         recyclerView.setLayoutManager(mLayoutManager);
         mainImageAdapter.addOnSelectionListener(onSelectionListener);
+        mainImageAdapter.setSelectionData(options.isSelectImageOrVideo(), options.getCountImage(), options.getCountVideo());
         recyclerView.setAdapter(mainImageAdapter);
         recyclerView.addItemDecoration(new HeaderItemDecoration(this, mainImageAdapter));
         mHandleView.setOnTouchListener(this);
@@ -1073,7 +1078,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
             });
             sendButton.startAnimation(anim);
             selectionList.clear();
-        } else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        } else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && !options.isCameraDisabled()) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             super.onBackPressed();

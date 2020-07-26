@@ -34,11 +34,13 @@ public class MainActivity extends AppCompatActivity {
         options = Options.init()
                 .setRequestCode(100)
                 .setCountImage(5)
+                .setCountVideo(1)
                 .setFrontFacing(false)
                 .setPreSelectedUrls(returnValue)
                 .setExcludeVideos(false)
                 .setExcludeImages(false)
                 .setCameraDisabled(true)
+                .setSelectImageOrVideo(true)
                 .setVideoDurationLimitinSeconds(30)
                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
                 .setPath("/akshay/new");

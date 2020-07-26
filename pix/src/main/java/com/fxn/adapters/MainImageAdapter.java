@@ -2,6 +2,7 @@ package com.fxn.adapters;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +44,14 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private FrameLayout.LayoutParams layoutParams;
     private RequestManager glide;
     private RequestOptions options;
+    private boolean isImageOrVideo = false;
+    private int imageCount = 1;
+    private int videoCount = 1;
+    private Context context;
 
     public MainImageAdapter(Context context) {
         this.list = new ArrayList<>();
+        this.context = context;
         int size = (Utility.WIDTH / SPAN_COUNT) - (MARGIN / 2);
         layoutParams = new FrameLayout.LayoutParams(size, size);
         layoutParams.setMargins(MARGIN, MARGIN - (MARGIN / 2), MARGIN, MARGIN - (MARGIN / 2));
@@ -74,9 +80,9 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-	    if (list.size() <= position) {
-		    return 0;
-	    }
+        if (list.size() <= position) {
+            return 0;
+        }
         Img i = list.get(position);
         return (i.getContentUrl().equalsIgnoreCase("")) ?
                 HEADER : ITEM;
@@ -89,6 +95,12 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void select(boolean selection, int pos) {
         list.get(pos).setSelected(selection);
         notifyItemChanged(pos);
+    }
+
+    public void setSelectionData(boolean isImageOrVideo, int imageCount, int videoCount) {
+        this.isImageOrVideo = isImageOrVideo;
+        this.imageCount = imageCount;
+        this.videoCount = videoCount;
     }
 
     @Override
@@ -117,12 +129,31 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if (image.getMedia_type() == 1) {
                 glide.load(image.getContentUrl()).apply(options).into(imageHolder.preview);
                 imageHolder.isVideo.setVisibility(View.GONE);
+
+                Log.e("MainAdapter", "onBindViewHolder: isAnyVideoSelected: " + isAnyVideoSelected());
+                Log.e("MainAdapter", "onBindViewHolder: isAnyImageSelected: " + isAnyImageSelected());
+
+                if (isAnyVideoSelected() && isImageOrVideo && !image.getSelected()) {
+                    imageHolder.disabled.setVisibility(View.VISIBLE);
+                } else if (getSelectedImageCount() >= imageCount) {
+                    imageHolder.disabled.setVisibility(View.VISIBLE);
+                } else {
+                    imageHolder.disabled.setVisibility(View.GONE);
+                }
             } else if (image.getMedia_type() == 3) {
                 glide.asBitmap()
                         .load(Uri.fromFile(new File(image.getUrl())))
                         .apply(options)
                         .into(imageHolder.preview);
                 imageHolder.isVideo.setVisibility(View.VISIBLE);
+
+                if (isAnyImageSelected() && isImageOrVideo && !image.getSelected()) {
+                    imageHolder.disabled.setVisibility(View.VISIBLE);
+                } else if (getSelectedVideoCount() >= videoCount) {
+                    imageHolder.disabled.setVisibility(View.VISIBLE);
+                } else {
+                    imageHolder.disabled.setVisibility(View.GONE);
+                }
             }
             imageHolder.selection.setVisibility(image.getSelected() ? View.VISIBLE : View.GONE);
         } else if (holder instanceof HeaderHolder) {
@@ -172,9 +203,9 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public String getSectionMonthYearText(int position) {
-	    if (list.size() <= position) {
-		    return "";
-	    }
+        if (list.size() <= position) {
+            return "";
+        }
         return list.get(position).getHeaderDate();
     }
 
@@ -182,21 +213,45 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private ImageView preview;
         private ImageView selection;
         private ImageView isVideo;
+        private ImageView disabled;
 
         Holder(View itemView) {
             super(itemView);
             preview = itemView.findViewById(R.id.preview);
             selection = itemView.findViewById(R.id.selection);
             isVideo = itemView.findViewById(R.id.isVideo);
+            disabled = itemView.findViewById(R.id.disabled);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
             preview.setLayoutParams(layoutParams);
+            disabled.setLayoutParams(layoutParams);
+            selection.setLayoutParams(layoutParams);
+            float scale = context.getResources().getDisplayMetrics().density;
+            int dpAsPixels = (int) (26 * scale + 0.5f);
+            selection.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels);
         }
 
         @Override
         public void onClick(View view) {
             int id = this.getLayoutPosition();
-            onSelectionListener.onClick(list.get(id), view, id);
+
+            Log.e("MainAdapter", "onClick: " + list.get(id).getSelected());
+
+            if (list.get(id).getSelected()) {
+                onSelectionListener.onClick(list.get(id), view, id);
+                Log.e("MainAdapter", "onClick: unselect");
+            } else if (list.get(id).getMedia_type() == 1) {
+                if (getSelectedImageCount() < imageCount && !isAnyVideoSelected()) {
+                    onSelectionListener.onClick(list.get(id), view, id);
+                    Log.e("MainAdapter", "onClick: image");
+                }
+            } else if (list.get(id).getMedia_type() == 3) {
+                if (getSelectedVideoCount() < videoCount && !isAnyImageSelected()) {
+                    onSelectionListener.onClick(list.get(id), view, id);
+                    Log.e("MainAdapter", "onClick: video");
+                }
+            }
+
         }
 
         @Override
@@ -214,5 +269,49 @@ public class MainImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
             header = itemView.findViewById(R.id.header);
         }
+    }
+
+    public boolean isAnyImageSelected() {
+        if (list.isEmpty())
+            return false;
+        for (Img img : list) {
+            if (img.getMedia_type() == 1 && img.getSelected())
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyVideoSelected() {
+        if (list.isEmpty())
+            return false;
+        for (Img img : list) {
+            if (img.getMedia_type() == 3 && img.getSelected())
+                return true;
+        }
+        return false;
+    }
+
+    public int getSelectedImageCount() {
+        if (list.isEmpty())
+            return 0;
+
+        int count = 0;
+        for (Img img : list) {
+            if (img.getMedia_type() == 1 && img.getSelected())
+                count++;
+        }
+        return count;
+    }
+
+    public int getSelectedVideoCount() {
+        if (list.isEmpty())
+            return 0;
+
+        int count = 0;
+        for (Img img : list) {
+            if (img.getMedia_type() == 3 && img.getSelected())
+                count++;
+        }
+        return count;
     }
 }
