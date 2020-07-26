@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="-2px"
                 android:minHeight="194dp"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+                app:layout_behavior="com.fxn.utility.ui.LockableBottomSheetBehavior">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"

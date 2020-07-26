@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPreSelectedUrls(returnValue)
                 .setExcludeVideos(false)
                 .setExcludeImages(false)
+                .setCameraDisabled(true)
                 .setVideoDurationLimitinSeconds(30)
                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
                 .setPath("/akshay/new");

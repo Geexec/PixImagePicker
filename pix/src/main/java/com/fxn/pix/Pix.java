@@ -3,6 +3,7 @@ package com.fxn.pix;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,6 +51,7 @@ import com.fxn.utility.ImageVideoFetcher;
 import com.fxn.utility.PermUtil;
 import com.fxn.utility.Utility;
 import com.fxn.utility.ui.FastScrollStateChangeListener;
+import com.fxn.utility.ui.LockableBottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraView;
@@ -94,7 +96,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
     private Runnable video_counter_runnable = null;
     private FastScrollStateChangeListener mFastScrollStateChangeListener;
     private RecyclerView recyclerView, instantRecyclerView;
-    private BottomSheetBehavior mBottomSheetBehavior;
+    private BottomSheetBehavior<FrameLayout> mBottomSheetBehavior;
     private InstantImageAdapter initaliseadapter;
     private View status_bar_bg, mScrollbar, topbar, bottomButtons, sendButton;
     private TextView mBubbleView, img_count;
@@ -240,7 +242,9 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
 
                         }
                     });
-                    sendButton.startAnimation(anim);
+
+                    if (!options.isCameraDisabled())
+                        sendButton.startAnimation(anim);
                 }
                 selection_count.setText(selectionList.size() + " " +
                         getResources().getString(R.string.pix_selected));
@@ -260,7 +264,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                 Utility.vibe(Pix.this, 50);
                 LongSelection = true;
                 if ((selectionList.size() == 0) && (mBottomSheetBehavior.getState()
-                        != BottomSheetBehavior.STATE_EXPANDED)) {
+                        != BottomSheetBehavior.STATE_EXPANDED && !options.isCameraDisabled())) {
                     sendButton.setVisibility(View.VISIBLE);
                     Animation anim = new ScaleAnimation(
                             0f, 1f, // Start and end values for the X axis scaling
@@ -591,6 +595,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         updateImages();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void onClickMethods() {
         clickme.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -781,15 +786,18 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         }
         if (selectionList.size() > 0) {
             LongSelection = true;
-            sendButton.setVisibility(View.VISIBLE);
-            Animation anim = new ScaleAnimation(
-                    0f, 1f, // Start and end values for the X axis scaling
-                    0f, 1f, // Start and end values for the Y axis scaling
-                    Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-                    Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
-            anim.setFillAfter(true); // Needed to keep the result of the animation
-            anim.setDuration(300);
-            sendButton.startAnimation(anim);
+
+            if(!options.isCameraDisabled()) {
+                sendButton.setVisibility(View.VISIBLE);
+                Animation anim = new ScaleAnimation(
+                        0f, 1f, // Start and end values for the X axis scaling
+                        0f, 1f, // Start and end values for the Y axis scaling
+                        Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                        Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+                anim.setFillAfter(true); // Needed to keep the result of the animation
+                anim.setDuration(300);
+                sendButton.startAnimation(anim);
+            }
             selection_check.setVisibility(View.GONE);
             topbar.setBackgroundColor(colorPrimaryDark);
             selection_count.setText(selectionList.size() + " " +
@@ -808,15 +816,18 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                 selectionList.addAll(modelList.getSelection());
                 if (selectionList.size() > 0) {
                     LongSelection = true;
-                    sendButton.setVisibility(View.VISIBLE);
-                    Animation anim = new ScaleAnimation(
-                            0f, 1f, // Start and end values for the X axis scaling
-                            0f, 1f, // Start and end values for the Y axis scaling
-                            Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-                            Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
-                    anim.setFillAfter(true); // Needed to keep the result of the animation
-                    anim.setDuration(300);
-                    sendButton.startAnimation(anim);
+
+                    if(!options.isCameraDisabled()) {
+                        sendButton.setVisibility(View.VISIBLE);
+                        Animation anim = new ScaleAnimation(
+                                0f, 1f, // Start and end values for the X axis scaling
+                                0f, 1f, // Start and end values for the Y axis scaling
+                                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+                        anim.setFillAfter(true); // Needed to keep the result of the animation
+                        anim.setDuration(300);
+                        sendButton.startAnimation(anim);
+                    }
                     selection_check.setVisibility(View.GONE);
                     topbar.setBackgroundColor(colorPrimaryDark);
                     selection_count.setText(selectionList.size() + " " +
@@ -836,14 +847,13 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
     }
 
     private void setBottomSheetBehavior() {
-        View bottomSheet = findViewById(R.id.bottom_sheet);
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        FrameLayout bottomSheet = findViewById(R.id.bottom_sheet);
+        mBottomSheetBehavior = LockableBottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setPeekHeight((int) (Utility.convertDpToPixel(194, this)));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
             }
 
             @Override
@@ -867,10 +877,32 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     initaliseadapter.notifyDataSetChanged();
                     hideScrollbar();
                     img_count.setText(String.valueOf(selectionList.size()));
-                    camera.open();
+                    if (options.isCameraDisabled()) {
+                        camera.open();
+                    }
                 }
             }
         });
+
+        if (options.isCameraDisabled()) {
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            mBottomSheetBehavior.setHideable(false);
+            mainImageAdapter.notifyDataSetChanged();
+            instantRecyclerView.setAlpha(0);
+            clickme.setVisibility(View.GONE);
+            front.setVisibility(View.GONE);
+            flash.setVisibility(View.GONE);
+            sendButton.setVisibility(View.GONE);
+            findViewById(R.id.arrow_up).setVisibility(View.GONE);
+            findViewById(R.id.message_bottom).setVisibility(View.GONE);
+
+            topbar.setAlpha(1);
+            recyclerView.setAlpha(1);
+            recyclerView.setVisibility(View.VISIBLE);
+            topbar.setVisibility(View.VISIBLE);
+            status_bar_bg.animate().translationY(0).setDuration(200).start();
+            Utility.showStatusBar(this);
+        }
     }
 
     private float getScrollProportion(RecyclerView recyclerView) {
