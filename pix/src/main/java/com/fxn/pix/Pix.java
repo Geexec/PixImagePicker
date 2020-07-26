@@ -738,7 +738,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
 
     private void updateImages() {
         mainImageAdapter.clearList();
-        Cursor cursor = Utility.getImageVideoCursor(Pix.this, options.isExcludeVideos());
+        Cursor cursor = Utility.getImageVideoCursor(Pix.this, options.isExcludeVideos(), options.isExcludeImages());
         if (cursor == null) {
             return;
         }
@@ -830,7 +830,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         imageVideoFetcher.setStartingCount(pos);
         imageVideoFetcher.header = header;
         imageVideoFetcher.setPreSelectedUrls(options.getPreSelectedUrls());
-        imageVideoFetcher.execute(Utility.getImageVideoCursor(Pix.this, options.isExcludeVideos()));
+        imageVideoFetcher.execute(Utility.getImageVideoCursor(Pix.this, options.isExcludeVideos(), options.isExcludeImages()));
         cursor.close();
         setBottomSheetBehavior();
     }

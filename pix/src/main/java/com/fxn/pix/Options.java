@@ -14,6 +14,7 @@ public class Options implements Serializable {
     private boolean frontfacing = false;
     private int videoDurationLimitinSeconds = 40;
     private boolean excludeVideos = false;
+    private boolean excludeImages = false;
     public static final int SCREEN_ORIENTATION_UNSET = -2;
     public static final int SCREEN_ORIENTATION_UNSPECIFIED = -1;
     public static final int SCREEN_ORIENTATION_LANDSCAPE = 0;
@@ -68,6 +69,15 @@ public class Options implements Serializable {
 
     public Options setExcludeVideos(boolean excludeVideos) {
         this.excludeVideos = excludeVideos;
+        return this;
+    }
+
+    public boolean isExcludeImages() {
+        return excludeImages;
+    }
+
+    public Options setExcludeImages(boolean excludeImages) {
+        this.excludeImages = excludeImages;
         return this;
     }
 

@@ -164,10 +164,10 @@ public class Utility {
                 null, null, Constants.ORDERBY);
     }
 
-    public static Cursor getImageVideoCursor(Context context, boolean excludeVideo) {
+    public static Cursor getImageVideoCursor(Context context, boolean excludeVideo, boolean excludeImages) {
         return context.getContentResolver()
                 .query(Constants.IMAGE_VIDEO_URI, Constants.IMAGE_VIDEO_PROJECTION,
-                        excludeVideo ? Constants.IMAGE_SELECTION : Constants.IMAGE_VIDEO_SELECTION, null, Constants.IMAGE_VIDEO_ORDERBY);
+                        excludeVideo ? Constants.IMAGE_SELECTION : excludeImages ? Constants.VIDEO_SELECTION : Constants.IMAGE_VIDEO_SELECTION, null, Constants.IMAGE_VIDEO_ORDERBY);
     }
 
     public static boolean isViewVisible(View view) {

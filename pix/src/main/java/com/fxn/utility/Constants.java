@@ -43,6 +43,10 @@ public class Constants {
 
     public static String IMAGE_SELECTION = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
             + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+
+    public static String VIDEO_SELECTION = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+            + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
     public static Uri IMAGE_VIDEO_URI = MediaStore.Files.getContentUri("external");
     public static String IMAGE_VIDEO_ORDERBY = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
 }
