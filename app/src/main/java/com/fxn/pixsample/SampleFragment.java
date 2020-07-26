@@ -68,7 +68,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	myAdapter = new MyAdapter(getActivity());
 	options = Options.init()
 			.setRequestCode(100)
-			.setCount(5)
+			.setCountImage(5)
 			.setPreSelectedUrls(returnValue)
 			.setExcludeVideos(false)
 			.setVideoDurationLimitinSeconds(30)

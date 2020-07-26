@@ -201,7 +201,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     initaliseadapter.select(false, position);
                     mainImageAdapter.select(false, position);
                 } else {
-                    if (options.getCount() <= selectionList.size()) {
+                    if (options.getCountImage() <= selectionList.size()) {
                         Toast.makeText(Pix.this,
                                 String.format(getResources().getString(R.string.selection_limiter_pix),
                                         selectionList.size()), Toast.LENGTH_SHORT).show();
@@ -260,7 +260,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
 
         @Override
         public void onLongClick(Img img, View view, int position) {
-            if (options.getCount() > 1) {
+            if (options.getCountImage() > 1) {
                 Utility.vibe(Pix.this, 50);
                 LongSelection = true;
                 if ((selectionList.size() == 0) && (mBottomSheetBehavior.getState()
@@ -280,7 +280,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     initaliseadapter.select(false, position);
                     mainImageAdapter.select(false, position);
                 } else {
-                    if (options.getCount() <= selectionList.size()) {
+                    if (options.getCountImage() <= selectionList.size()) {
                         Toast.makeText(Pix.this,
                                 String.format(getResources().getString(R.string.selection_limiter_pix),
                                         selectionList.size()), Toast.LENGTH_SHORT).show();
@@ -313,7 +313,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
     }
 
     public static void start(Fragment context, int requestCode) {
-        start(context, Options.init().setRequestCode(requestCode).setCount(1));
+        start(context, Options.init().setRequestCode(requestCode).setCountImage(1));
     }
 
     public static void start(final FragmentActivity context, final Options options) {
@@ -328,7 +328,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
     }
 
     public static void start(final FragmentActivity context, int requestCode) {
-        start(context, Options.init().setRequestCode(requestCode).setCount(1));
+        start(context, Options.init().setRequestCode(requestCode).setCountImage(1));
     }
 
     private void hideScrollbar() {
@@ -435,7 +435,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         camera.setVideoSize(result);
         camera.setLifecycleOwner(Pix.this);
 
-        if (options.isFrontfacing()) {
+        if (options.isFrontFacing()) {
             camera.setFacing(Facing.FRONT);
         } else {
             camera.setFacing(Facing.BACK);
@@ -528,7 +528,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         selection_count = findViewById(R.id.selection_count);
         selection_back = findViewById(R.id.selection_back);
         selection_check = findViewById(R.id.selection_check);
-        selection_check.setVisibility((options.getCount() > 1) ? View.VISIBLE : View.GONE);
+        selection_check.setVisibility((options.getCountImage() > 1) ? View.VISIBLE : View.GONE);
         sendButton = findViewById(R.id.sendButton);
         img_count = findViewById(R.id.img_count);
         mBubbleView = findViewById(R.id.fastscroll_bubble);
@@ -584,9 +584,9 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
 
         flashDrawable = R.drawable.ic_flash_off_black_24dp;
 
-        if ((options.getPreSelectedUrls().size()) > options.getCount()) {
+        if ((options.getPreSelectedUrls().size()) > options.getCountImage()) {
             int large = options.getPreSelectedUrls().size() - 1;
-            int small = options.getCount();
+            int small = options.getCountImage();
             for (int i = large; i > (small - 1); i--) {
                 options.getPreSelectedUrls().remove(i);
             }
@@ -640,10 +640,10 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
         clickme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectionList.size() >= options.getCount()) {
+                if (selectionList.size() >= options.getCountImage()) {
                     Toast.makeText(Pix.this,
                             String.format(getResources().getString(R.string.cannot_click_image_pix),
-                                    "" + options.getCount()), Toast.LENGTH_LONG).show();
+                                    "" + options.getCountImage()), Toast.LENGTH_LONG).show();
                     return;
                 }
                 final ObjectAnimator oj = ObjectAnimator.ofFloat(camera, "alpha", 1f, 0f, 0f, 1f);
@@ -730,12 +730,12 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                     }
                 });
                 oa1.start();
-                if (options.isFrontfacing()) {
-                    options.setFrontfacing(false);
+                if (options.isFrontFacing()) {
+                    options.setFrontFacing(false);
                     camera.setFacing(Facing.BACK);
                 } else {
                     camera.setFacing(Facing.FRONT);
-                    options.setFrontfacing(true);
+                    options.setFrontFacing(true);
                 }
             }
         });
@@ -1042,7 +1042,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
                 initaliseadapter.notifyItemChanged(img.getPosition());
             }
             LongSelection = false;
-            if (options.getCount() > 1) {
+            if (options.getCountImage() > 1) {
                 selection_check.setVisibility(View.VISIBLE);
             }
             DrawableCompat.setTint(selection_back.getDrawable(), colorPrimaryDark);

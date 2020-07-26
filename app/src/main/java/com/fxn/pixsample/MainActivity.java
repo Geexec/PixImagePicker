@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         myAdapter = new MyAdapter(this);
         options = Options.init()
                 .setRequestCode(100)
-                .setCount(5)
-                .setFrontfacing(false)
+                .setCountImage(5)
+                .setFrontFacing(false)
                 .setPreSelectedUrls(returnValue)
                 .setExcludeVideos(false)
                 .setExcludeImages(false)

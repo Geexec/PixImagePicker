@@ -7,11 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 public class Options implements Serializable {
-    private int count = 1;
+    private int countImage = 1;
+    private int countVideo = 1;
     private int requestCode = 0;
     private String path = "/DCIM/Camera";
     private int height = 0, width = 0;
-    private boolean frontfacing = false;
+    private boolean frontFacing = false;
     private int videoDurationLimitinSeconds = 40;
     private boolean excludeVideos = false;
     private boolean excludeImages = false;
@@ -90,12 +91,14 @@ public class Options implements Serializable {
         return width;
     }
 
-    public boolean isFrontfacing() {
-        return this.frontfacing;
+    public boolean isFrontFacing() {
+        return this.frontFacing;
     }
 
-    public Options setFrontfacing(boolean frontfacing) {
-        this.frontfacing = frontfacing;
+    public Options setFrontFacing(boolean frontFacing) {
+        this.frontFacing = frontFacing;
+        return this;
+    }
 
     public boolean isCameraDisabled() {
         return this.cameraDisabled;
@@ -112,13 +115,23 @@ public class Options implements Serializable {
         }
     }
 
-    public int getCount() {
-        return count;
+    public int getCountImage() {
+        return countImage;
     }
 
-    public Options setCount(int count) {
+    public Options setCountImage(int countImage) {
         check();
-        this.count = count;
+        this.countImage = countImage;
+        return this;
+    }
+
+    public int getCountVideo() {
+        return countVideo;
+    }
+
+    public Options setCountVideo(int countVideo) {
+        check();
+        this.countVideo = countVideo;
         return this;
     }
 
