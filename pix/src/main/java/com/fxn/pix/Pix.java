@@ -82,6 +82,7 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
     private static final String OPTIONS = "options";
     private static final int sTrackSnapRange = 5;
     public static String IMAGE_RESULTS = "image_results";
+    public static String VIDEO_RESULTS = "video_results";
     public static float TOPBAR_HEIGHT;
     private static int maxVideoDuration = 40000;
     private static ImageVideoFetcher imageVideoFetcher;
@@ -357,13 +358,18 @@ public class Pix extends AppCompatActivity implements View.OnTouchListener {
     }
 
     public void returnObjects() {
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> imgList = new ArrayList<>();
+        ArrayList<String> videoList = new ArrayList<>();
         for (Img i : selectionList) {
-            list.add(i.getUrl());
-            // Log.e("Pix images", "img " + i.getUrl());
+            if(i.getMedia_type() == 1)
+                imgList.add(i.getUrl());
+            else if(i.getMedia_type() == 3)
+                videoList.add(i.getUrl());
+             // Log.e("Pix images", "img " + i.getUrl());
         }
         Intent resultIntent = new Intent();
-        resultIntent.putStringArrayListExtra(IMAGE_RESULTS, list);
+        resultIntent.putStringArrayListExtra(IMAGE_RESULTS, imgList);
+        resultIntent.putStringArrayListExtra(VIDEO_RESULTS, videoList);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
